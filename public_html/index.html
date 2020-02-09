@@ -43,13 +43,61 @@ and open the template in the editor.
         </div>
         <div class="row">
           <div class="col-4">
+            <ul class="list-group">
+                <li class="list-group-item">Terre de Bussière : La Janasse</li>
+                <li class="list-group-item">Vieilles Vignes</li>
+                <li class="list-group-item">Clos des Cazaux</li>
+              </ul>
           </div>
            <div class="col-8">
+               <div class="row">
+                   <div class="col-6">
+                    <form>
+                        <div class="form-group">
+                          <label for="formGroupExampleInput">name</label>
+                          <input type="text" class="form-control" id="name" placeholder="name">
+                        </div>
+                        <div class="form-group">
+                          <label for="formGroupExampleInput2">grapes</label>
+                          <input type="text" class="form-control" id="grappe" placeholder="grape">
+                        </div>
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">country</label>
+                            <input type="text" class="form-control" id="country" placeholder="country">
+                          </div>
+                          <div class="form-group">
+                            <label for="formGroupExampleInput2">Region</label>
+                            <input type="text" class="form-control" id="region" placeholder="region">
+                          </div>
+                          <div class="form-group">
+                            <label for="formGroupExampleInput">Years</label>
+                            <input type="text" class="form-control" id="years" placeholder="years">
+                          </div>
+                          <div class="form-row">
+                              <div class="col-md-3 mb-3">
+                                <button class="btn btn-success mr-2" type="submit" id="btSubmit" name="btSubmit">submit</button>
+                              </div>
+                              <div class="col-md-3 mb-3">
+                                <button class="btn btn-danger mr-2" type="delete" id="btDelete" name="btDelete">delete</button>
+                              </div>
+                          </div>
+                          
+                      </form>
+                   </div>
+                   <div class="col-6">
+                    <img src="images/janasse.jpg" width="100" alt="caviste">
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Example textarea</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    </div>
+                </div>
+               </div>
           </div>
         </div> 
     </div>
 </main>
     <footer>&copy; Epfc</footer>
+<script src="./script.js"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
