@@ -1,0 +1,20 @@
+{
+    "vin": [
+        {
+          "id": 0,
+          "name": "Terre de Bussière",
+          "grapes": "merlot",
+          "country": "France",
+          "years": 2016,
+          "pictures": "images/janasse.jpg"
+        },
+        {
+          "id": 1,
+          "name": "Vieilles Vignes",
+          "grapes": "Grenache",
+          "country": "France",
+          "years": 2017,
+          "pictures": "images/janasse.jpg"
+        }
+    ]
+}
