@@ -1,15 +1,17 @@
 
 
 window.onload = function () {
+  let data;
   const xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-        console.log('dataonlaod',this)
-        const data = JSON.parse(this.response)
+        data = JSON.parse(this.response)
         console.log('dataonlaod',data.vin)
         createListe(data.vin);
+        addEventSearch(data.vin);
     }
   };
+  
   xhttp.open("GET", "data.json", true);
   xhttp.send();
 }
@@ -62,6 +64,23 @@ addEventSave = (vins) => {
     btSubmit.addEventListener('click',() => save(btSubmit, vins));
 }
 
+addEventSearch = (vins) => {
+    console.log('addEventSearch',vins)
+    const btSearch = document.getElementById('btSearch');
+    btSearch.addEventListener('click',() => search(btSearch, vins));
+}
+
+search = (btn, vins) => {
+    let input = document.getElementById('keyword');
+    let inputValue = input.value;
+    let vinsSelect
+    const  regex = new RegExp(inputValue,"i");
+    console.log('input',input.value);
+    console.log('vin',vins);
+    vinsSelect = vins.filter(vin => vin.name.search(regex)!= -1);
+    console.log('vinsSelect',vinsSelect);
+    createListe(vinsSelect);
+}
 winesFormat = (form, vins) => {
   let vinSelect;
   vins.map(vin => {
