@@ -1,7 +1,8 @@
 
+let vins;
 
 window.onload = function () {
-  let data;
+  /*
   const xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -14,6 +15,17 @@ window.onload = function () {
   
   xhttp.open("GET", "data.json", true);
   xhttp.send();
+  */
+ var myInit = { method: 'GET' };
+ fetch("data.json",myInit).then( (response) => {
+  if (response.ok) {
+    response.json().then( res => {
+      vins = res.vin 
+      createListe(vins);
+      addEventSearch(vins);
+    })
+  }
+ })
 }
 
 createListe = (vins) => {
