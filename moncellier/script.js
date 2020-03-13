@@ -1,5 +1,6 @@
 
 let vins;
+const pictureUrl = "http://localhost/caviste/caviste/public/pics"
 
 window.onload = function () {
   /*
@@ -17,10 +18,12 @@ window.onload = function () {
   xhttp.send();
   */
  var myInit = { method: 'GET' };
- fetch("data.json",myInit).then( (response) => {
+ let apiUrl = "http://localhost:8888";
+ 
+ fetch(apiUrl+"/api/wines",myInit).then( (response) => {
   if (response.ok) {
     response.json().then( res => {
-      vins = res.vin 
+      vins = res 
       createListe(vins);
       addEventSearch(vins);
     })
@@ -50,6 +53,7 @@ createListe = (vins) => {
 
 select = (li,vins) => {
   const form = document.getElementById('frmWine').elements
+  const image = document.getElementById('image')
   console.log(li.id);
   let vinSelect;
   vins.map(vin => {
@@ -61,7 +65,8 @@ select = (li,vins) => {
           elem.value = vinSelect[elem.id]
       }
   }
-  
+  console.log('picture',pictureUrl+'/'+vinSelect.picture);
+  image.src = pictureUrl+'/'+vinSelect.picture;
   console.log('vinselect',vinSelect);
   console.log('form',form);
   
@@ -73,7 +78,7 @@ addClick = (li,vins) => {
 
 addEventSave = (vins) => {
     const btSubmit = document.getElementById('btSubmit');
-    btSubmit.addEventListener('click',() => save(btSubmit, vins));
+    btSubmit.addEventListener('click',(e) => save(e,btSubmit, vins));
 }
 
 addEventSearch = (vins) => {
@@ -101,8 +106,11 @@ winesFormat = (form, vins) => {
     
 }
 
-save = (button, vins) => {
+save = (e,button, vins) => {
     console.log(button.form.elements);
+    console.log(e);
+    vin = {};
+    
   /*
   const xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
