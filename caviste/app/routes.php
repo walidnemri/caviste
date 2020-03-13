@@ -7,6 +7,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
+use RedBeanPHP\R;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
 return function (App $app) {
     $app->get('/', function (Request $request, Response $response) {
@@ -20,19 +22,17 @@ return function (App $app) {
         //$data = include('public/wines.json');     //Mock
         
         //Se connecter au serveur de DB
+        
+        
         try {
-            $pdo = new PDO('mysql:host=localhost;dbname=cellar','root','root', [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-            ]);
-        
+            // R::setup('mysql:host=localhost;dbname=cellar','root','root');
+       
+            
             //Préparer la requête
-            $query = 'SELECT * FROM wine';
-        
-            //Envoyer la requête
-            $stmt = $pdo->query($query);
-
-            //Extraire les données
-            $wines = $stmt->fetchAll(PDO::FETCH_ASSOC);     //var_dump($wines); die;
+            //$query = 'SELECT * FROM wine';
+            $wines = R::findAll('wine','order BY name');
+            
+            
         } catch(PDOException $e) {
             $wines = [
                 [
@@ -44,8 +44,14 @@ return function (App $app) {
         }
         
         //Convertir les données en JSON
-        $data = json_encode($wines);
+        $winesTab=[];
+        foreach($wines as $b) {
+            $winesTab[] = $b;
+        }
+        $data = json_encode($winesTab);
         
+        
+        // var_dump($data);
         $response->getBody()->write($data);
         return $response
                 ->withHeader('content-type', 'application/json')
@@ -56,18 +62,16 @@ return function (App $app) {
         $id = $args['id'];
         
         try {
-            $pdo = new PDO('mysql:host=localhost;dbname=cellar','root','root', [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-            ]);
-            // nettoyer les donnee entrante
-            $id = $pdo->quote($id,PDO::PARAM_INT);
-            $query = "SELECT * FROM wine WHERE id=$id";
+       
+          
+       
         
-            //Envoyer la requête
-            $stmt = $pdo->query($query);
-
+            //Préparer la requête
+            //$query = 'SELECT * FROM wine';
+            $wines = R::findOne('wine','id=?',[$id]);
+            
             //Extraire les données
-            $wines = $stmt->fetch(PDO::FETCH_ASSOC);     //var_dump($wines); die;
+  
         } catch(PDOException $e) {
             $wines = [
                 [
@@ -79,8 +83,10 @@ return function (App $app) {
         }
         
         //Convertir les données en JSON
-        $data = json_encode($wines);
+     
+        $winesTab[] = $wines;
         
+        $data = json_encode($winesTab);
         $response->getBody()->write($data);
         return $response
                 ->withHeader('content-type', 'application/json')
