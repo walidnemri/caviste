@@ -17,13 +17,17 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
  *
  * @author 1909wanemri
  */
-class RedBeanPHPMiddelware {
+class CorsMiddelware {
     //put your code here
      public function __invoke(Request $request, RequestHandler $handler) {
-       R::setup('mysql:host=127.0.0.1;dbname=cellar','root','');
+       
        
        $response = $handler->handle($request);
-       R::close();
-       return $response;
+       
+       return $response
+                  ->withHeader('Access-Control-Allow-Origin', 'http://mysite')
+                  //->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+                  ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+       ;
     }
 }

@@ -3,20 +3,12 @@ let vins;
 const pictureUrl = "http://localhost/caviste/caviste/public/pics"
 
 window.onload = function () {
-  /*
-  const xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        data = JSON.parse(this.response)
-        console.log('dataonlaod',data.vin)
-        createListe(data.vin);
-        addEventSearch(data.vin);
-    }
-  };
+  btnNewWine = document.getElementById('newWine')
+  btDelete = document.getElementById('btDelete')
   
-  xhttp.open("GET", "data.json", true);
-  xhttp.send();
-  */
+  btnNewWine.addEventListener('click',() => newWine());
+  btDelete.addEventListener('click',() => deleteWine());
+
  var myInit = { method: 'GET' };
  let apiUrl = "http://localhost:8888";
  
@@ -29,6 +21,40 @@ window.onload = function () {
     })
   }
  })
+}
+
+deleteWine = () => {
+  const apiUrl = "http://localhost:8888";
+  const id = document.getElementById('id');
+  if (!id.value) {
+    newWine
+  } else {
+    var myInit = {
+      method: 'DELETE',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8' 
+       },
+    };
+    
+    fetch(`${apiUrl}/api/wines/${id.value}`,myInit).then( (response) => {
+     if (response.ok) {
+       response.json().then( res => {
+         console.log(res);
+         document.location.reload(true); 
+       })
+     }
+    })
+  }
+}
+
+newWine = () => {
+  btnNewWine = document.getElementById('newWine')
+  const form = document.getElementById('frmWine').elements
+  for (elem of form) {
+     elem.value = '';
+  }
+
 }
 
 createListe = (vins) => {
@@ -109,25 +135,35 @@ winesFormat = (form, vins) => {
 save = (e,button, vins) => {
     console.log(button.form.elements);
     console.log(e);
+    const form = document.getElementById('frmWine').elements
+    const image = document.getElementById('image')
     vin = {};
+    for (elem of form) {
+      console.log('elem',elem.id);
+      vin[elem.id] = elem.value;
+      }
     
-  /*
-  const xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if(this.readyState==4) {
-        switch(this.status) {
-            case 200:
-                    console.log(this.status, this.statusText, 'vin ajouté');
-                    break;
-            case 400:
-                    console.log(this.status, this.statusText, 'Syntaxe de la requête erroné!');
-        }
-    }
-  };
-  xhttp.open("POST", "mockserveur.php", true);
-  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhttp.send(`data=data`);
-  */
+    vin.picture = image.src.substr(image.src.lastIndexOf('/')+1);
+    console.log('vinpicture',vin.picture);
+    const method = vin.id ? 'PUT': 'POST';
+
+    var myInit = {
+      method,
+      body: JSON.stringify(vin),
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8' 
+       },
+    };
+    let apiUrl = "http://localhost:8888";
+    const api = method === 'PUT' ? `${apiUrl}/api/wines/${vin.id}`: `${apiUrl}/api/wines`;
     
+    fetch(api,myInit).then( (response) => {
+     if (response.ok) {
+       response.json().then( res => {
+         console.log(res);
+       })
+     }
+    })    
 }
 
