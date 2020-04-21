@@ -12,14 +12,40 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use App\Application\Middleware\CorsMiddelware;
+use App\Application\Controllers\WineController;
 
 return function (App $app) {
-    $app->get('/', function (Request $request, Response $response) {
-        //var_dump($request);
-        $response->getBody()->write('Géniaaal!');
-        return $response;
+    define( 'REDBEAN_MODEL_PREFIX', 'App\\Application\\Models\\' );
+    $app->get('/', WineController::class.':index');
+    $app->get('/show/{id}', WineController::class.':show');
+
+    $app->get('/api/wines/search/{keyword}', function(Request $request, Response $response, array $args) {
+        $keyword = $args['keyword'];
+        
+        //Se connecter au serveur de DB
+        try {
+            $result = R::findAll('wine', 'name LIKE ?',["%$keyword%"]);
+            
+            $wines = [$result];
+        } catch(PDOException $e) {
+            $wines = [
+                [
+                    "error" => "Problème de base données",
+                    "errorCode" => $e->getCode(),
+                    "errorMsg" => $e->getMessage(),
+                ]
+            ];
+        }
+        
+        //Convertir les données en JSON
+        $data = json_encode($wines);
+        
+        $response->getBody()->write($data);
+        return $response
+                ->withHeader('content-type', 'application/json')
+                ->withHeader('charset', 'utf-8');
     });
-    
+
     $app->get('/api/wines', function(Request $request, Response $response) {
         //Récupérer les données de la BD
         //$data = include('public/wines.json');     //Mock
@@ -95,6 +121,8 @@ return function (App $app) {
         
         try { 
             //Préparer la requête
+            //$query = 'SELECT * FROM wine';
+            
             $beanWine = R::findOne('wine','id=?',[$id]);
             $wines = R::trash($beanWine);
             
@@ -130,6 +158,7 @@ return function (App $app) {
        $log->warning(implode("-",$wine));
        
         try {
+            /*
             $pdo = new PDO('mysql:host=127.0.0.1;dbname=cellar','root','', [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ]);
@@ -150,14 +179,27 @@ return function (App $app) {
                 ':description'=> $wine['description'],
                 ':picture'=> $wine['picture'],
             ]);
+            */
 
+            $newWine = R::dispense('wine');
+            
+            //Modifier le vin
+            $newWine->name = $wine['name'];
+            $newWine->year = $wine['year'];
+            $newWine->grapes = $wine['grapes'];
+            $newWine->country = $wine['country'];
+            $newWine->region = $wine['region'];
+            $newWine->description = $wine['description'];
+            $newWine->picture = substr(strrchr($wine['picture'],'/'),1);
+            
+            //Sauvegarder dans la DB le vin modifié
+            $insertedId = R::store($newWine);
             //Extraire les données
-            if($result) {
-                $data = json_encode(['success'=>true]);
-                
+            if($insertedId) {
+                $data = ['success'=>true, 'id'=>$insertedId];    
             } else {
-                $data = json_encode(['success'=>false]);
-            }
+                $data = ['success'=>false];
+            }   
             
         } catch(PDOException $e) {
             $data = [
@@ -187,6 +229,7 @@ return function (App $app) {
  
         
           try {
+            /*
             $pdo = new PDO('mysql:host=127.0.0.1;dbname=cellar','root','', [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ]);
@@ -208,13 +251,26 @@ return function (App $app) {
                 ':description'=> $wine['description'],
                 ':picture'=> $wine['picture'],
             ]);
+            */
+            $selectedWine = R::load('wine', $id);
+            
+            //Modifier le vin
+            $selectedWine->name = $wine['name'];
+            $selectedWine->year = $wine['year'];
+            $selectedWine->grapes = $wine['grapes'];
+            $selectedWine->country = $wine['country'];
+            $selectedWine->region = $wine['region'];
+            $selectedWine->description = $wine['description'];
+            $selectedWine->picture = substr(strrchr($wine['picture'],'/'),1);
+            
+            //Sauvegarder dans la DB le vin modifié
+            $updatedId = R::store($selectedWine);
 
             //Extraire les données
-            if($result && $stmt->rowCount() > 0) {
-                $data = json_encode(['success'=>true]);
-                
+            if($updatedId === $id) {
+                $data = ['success'=>true];    
             } else {
-                $data = json_encode(['success'=>false]);
+                $data = ['success'=>false];
             }
           
         } catch(PDOException $e) {
@@ -226,9 +282,9 @@ return function (App $app) {
                 ]
             ];
             
-            $data = json_encode($data);
         }
 
+        $data = json_encode($data);
         $response->getBody()->write($data);
         return $response
                   ->withHeader('content-type', 'application/json')
