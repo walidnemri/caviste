@@ -1,11 +1,48 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Caviste - {% block title%}{% endblock %}</title>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.min.css">
+        <style>
+            .mega-menu .dropdown-pane {
+                width: 100%;
+                max-width: 85rem;
+                margin: 0 auto !important;
+                left: 0% !important;
+                right: 0% !important;
+            }
+
+            .mega-menu .menu {
+                background: none;
+            }
+
+            .mega-menu > a::after {
+                display: block;
+                width: 0;
+                height: 0;
+                border: inset 6px;
+                content: '';
+                border-bottom-width: 0;
+                border-top-style: solid;
+                border-color: #1779ba transparent transparent;
+                margin-left: 10px;
+                margin-top: 11%;
+            }
+        </style>
     </head>
     <body>
         <main>
             {% block content %}{% endblock %}
         </main>
+         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script>
+        <script>
+             $(document).foundation();
+        </script>
+         {% block javascript %}{% endblock %}
     </body>
 </html>

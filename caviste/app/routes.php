@@ -18,6 +18,9 @@ return function (App $app) {
     define( 'REDBEAN_MODEL_PREFIX', 'App\\Application\\Models\\' );
     $app->get('/', WineController::class.':index');
     $app->get('/show/{id}', WineController::class.':show');
+    $app->get('/search/{keyword}', WineController::class.':search');
+    $app->get('/sort/{sort}', WineController::class.':sort');
+    $app->get('/filter/{filter}', WineController::class.':filter');
 
     $app->get('/api/wines/search/{keyword}', function(Request $request, Response $response, array $args) {
         $keyword = $args['keyword'];

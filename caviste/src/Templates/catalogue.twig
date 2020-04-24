@@ -1,0 +1,150 @@
+{% extends 'layout.html.twig' %}
+{% block title %}liste des vins{% endblock %}
+{% block content %}
+    <!-- Start Top Bar -->
+
+    <!-- End Top Bar -->
+
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <ul class="dropdown menu" data-dropdown-menu>
+          <li class="menu-text">Sort</li>
+          <li class="mega-menu">
+            <a data-toggle="mega-menu" href="#">by</a>
+            <div class="dropdown-pane bottom" id="mega-menu" data-dropdown data-options="closeOnClick:true; hover: true; hoverPane: true; vOffset:11">
+              <div class="row expanded">
+                <div class="column">
+                  <ul class="menu vertical">
+                    <li><a href="/sort/name">name</a></li>
+                    <li><a href="/sort/year">year</a></li>
+                    <li><a href="/">no sort</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="menu-text">filter</li>
+          <li class="mega-menu">
+            <a data-toggle="mega-menu2" href="#">by</a>
+            <div class="dropdown-pane bottom" id="mega-menu2" data-dropdown data-options="closeOnClick:true; hover: true; hoverPane: true; vOffset:11">
+              <div class="row expanded">
+                <div class="column">
+                  <ul class="menu vertical">
+                    <li><a href="/">no filter</a></li>
+                    <li>
+                      <a href="#">country</a>
+                      <ul class="menu">
+                        {% for c in country  %}
+                         <li><a href="/filter/{{c}}">{{c}}</a></li>
+                        {% endfor %}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="top-bar-right">
+        <ul class="menu">
+          <li><input id='searchVal' type="search" placeholder="Search"></li>
+          <li><button id='searchButton' type="button" class="button">Search</button></li>
+        </ul>
+      </div>
+    </div>
+
+
+    <div class="orbit" role="region" aria-label="Favorite Space Pictures" data-orbit>
+      <ul class="orbit-container">
+        <button class="orbit-previous" aria-label="previous"><span class="show-for-sr">Previous Slide</span>&#9664;</button>
+        <button class="orbit-next" aria-label="next"><span class="show-for-sr">Next Slide</span>&#9654;</button>
+        <li class="orbit-slide is-active">
+          <img src="https://placehold.it/2000x750">
+        </li>
+        <li class="orbit-slide">
+          <img src="https://placehold.it/2000x750">
+        </li>
+        <li class="orbit-slide">
+          <img src="https://placehold.it/2000x750">
+        </li>
+        <li class="orbit-slide">
+          <img src="https://placehold.it/2000x750">
+        </li>
+      </ul>
+    </div>
+
+    <div class="row column text-center">
+      <h2>{{title}}</h2>
+      <hr>
+    </div>
+
+    <div class="row small-up-2 large-up-4">
+      {% for vin in vins  %}
+      <div class="column">
+        <img   data-id="{{vin.id}}" class="thumbnail" src="http://localhost:8080/pics/{{ vin.picture }}">
+        <h5>{{ vin.name }}</h5>
+        <p>{{ vin.grapes }}</p>
+        <button data-id="{{vin.id}}">buy</button>
+      </div>
+      {% endfor %}
+    </div>
+    <div id="dialog" title="Basic dialog">
+      <div style="float: left">
+          <img class="picture-wine" src="" alt="">
+      </div>
+      <div id="wine-description">
+          <p id='test' data-id="country"><strong>Country:</strong> <span></span></p>
+          <p data-id="region"><strong>Region:</strong> <span></span></p>
+          <p data-id="grapes"><strong>Grapes:</strong> <span></span></p>
+          <p data-id="year"><strong>Year:</strong> <span></span></p>
+          <p data-id="description"><strong>Description:</strong> <span></span></p>
+      </div>
+    </div>
+
+    <hr>
+    {% endblock %}
+    {% block javascript %}
+    <script>
+      $( function() {
+        const searchButton = document.getElementById('searchButton');
+        const searchVal = document.getElementById('searchVal');
+
+        searchButton.addEventListener('click', () => {
+          const keyword = searchVal.value;
+          window.location.href = "/search/"+keyword;
+        })
+
+        dialog = $( "#dialog" ).dialog({
+          autoOpen: false,
+          height: 400,
+          width: 550,
+          modal: true,
+        });
+
+        //console.log(document.querySelectorAll('.detail'));
+        $( "img.thumbnail" ).on( "click", function() {
+          console.log($(this).data('id'));
+          const id = $(this).data('id');
+          console.log('children',document.getElementById("wine-description").children);
+          const p = document.querySelectorAll("#wine-description > p");
+          const img = document.querySelector(".picture-wine");
+
+          $.getJSON('http://localhost:8080/api/wines/'+id, function(data){
+            console.log(img);
+            img.src = `http://localhost:8080/pics/generic.jpg`;
+
+            if (data[0].picture) img.src = `http://localhost:8080/pics/${data[0].picture}`;
+
+            for (elem of p) {
+                console.log('elem',elem);
+                if (data[0][elem.getAttribute('data-id')]) {
+                    const attr = elem.getAttribute('data-id')
+                    elem.innerHTML = `<strong>${attr}</strong> : ${data[0][elem.getAttribute('data-id')]}`
+                }
+            }
+          })
+          dialog.dialog( "open" );
+        });
+      } );
+    </script>
+  {% endblock %}
